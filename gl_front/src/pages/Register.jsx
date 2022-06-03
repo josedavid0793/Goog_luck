@@ -1,7 +1,7 @@
 import { React, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import Alert from "../components/Alert";
+import clientAxios from "../config/axios";
 
 const Register = () => {
   const [names, setNames] = useState("");
@@ -29,16 +29,16 @@ const Register = () => {
         documentnumber,
       ].includes("")
     ) {
-      setAlert({ msg: "Hay campos vacios", error: true });
+      setAlert({ msg: "There are empty fields", error: true });
       return;
     }
     if (password !== passwordrepeat) {
-      setAlert({ msg: "Los password son diferentes", error: true });
+      setAlert({ msg: "Passwords are different", error: true });
       return;
     }
     if (password.length < 6) {
       setAlert({
-        msg: "El password es muy corto, agregar minimo 6 caracteres.",
+        msg: "The password is too short, add at least 6 characters.",
         error: true,
       });
       return;
@@ -46,8 +46,7 @@ const Register = () => {
     setAlert({});
     //Create user via API...
     try {
-      const url = "http://localhost:4000/api/users";
-      await axios.post(url, {
+      await clientAxios.post(`/users`, {
         names,
         lastname,
         email,
@@ -61,14 +60,14 @@ const Register = () => {
         msg: `The user ${email} has been successfully registered, check your email`,
         error: false,
       });
-      setInterval("location.reload()",10000);
+      setInterval("location.reload()", 10000);
       //console.log(resp);
     } catch (error) {
       setAlert({
         msg: error.response.data.msg,
         error: true,
       });
-      setInterval("location.reload()",10000);
+      setInterval("location.reload()", 10000);
       //console.log(error);
     }
   };
@@ -190,7 +189,10 @@ const Register = () => {
           />
         </form>
         <nav className="mt-10 lg:flex lg:justify-between">
-          <Link to="/" className="block text-center my-5 text-gray-500 hover:text-indigo-600">
+          <Link
+            to="/"
+            className="block text-center my-5 text-gray-500 hover:text-indigo-600"
+          >
             Do you have an account? Login
           </Link>
           <Link

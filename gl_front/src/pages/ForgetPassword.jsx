@@ -1,7 +1,27 @@
-import {React, useState} from "react";
+import { React, useState } from "react";
 import { Link } from "react-router-dom";
+import Alert from "../components/Alert";
+import clientAxios from "../config/axios";
 
 const ForgetPassword = () => {
+  const [email, setEmail] = useState("");
+  const [alert, setAlert] = useState({});
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (email === "") {
+      setAlert({ msg: "Email is required", error: true, });
+      return;
+    }
+    try {
+      const {data}=await clientAxios.post('/users/reset-password',{email});
+      console.log(data);
+      setAlert({msg:data.msg});
+    } catch (error) {
+      setAlert({msg:error.response.data.msg, error:true,});
+    }
+  };
+  const { msg } = alert;
   return (
     <>
       <div>
@@ -10,15 +30,18 @@ const ForgetPassword = () => {
         </h1>
       </div>
       <div className="mt-5 lg:mt-20 shadow-lg lg:shadow-sm px-5 py-10 rounded-xl bg-white">
-        <form>
+        {msg && <Alert alert={alert} />}
+        <form onSubmit={handleSubmit}>
           <div className="my-5">
             <label className="uppercase text-gray-600 block text-xs lg:text-base font-bold">
               Email
             </label>
             <input
-              type="text"
+              type="email"
               placeholder="Email"
               className="border w-full p-3 mt-3 bg-gray-50 rounded-xl"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <input
@@ -29,7 +52,7 @@ const ForgetPassword = () => {
         </form>
         <nav className="mt-10 lg:flex lg:justify-between">
           <Link to="/" className="block text-center my-5 text-gray-500">
-          Do you have an account? Login
+            Do you have an account? Login
           </Link>
           <Link to="/register" className="block text-center my-5 text-gray-500">
             You don't have a user account yet? Register

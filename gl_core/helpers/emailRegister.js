@@ -23,7 +23,7 @@ const emailRegister = async (datos) => {
     <p>Please disregard this email if you did not apply for this account.</p>
     `
   });
-  console.log("Mensaje enviado:%s",info.messageId);
+ // console.log("Mensaje enviado:%s",info.messageId);
 };
 
 export default emailRegister;

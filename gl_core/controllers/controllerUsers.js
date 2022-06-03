@@ -2,6 +2,9 @@ import Users from "../models/Users.js";
 import generateJWT from "../helpers/generateJWT.js";
 import generateId from "../helpers/generateId.js";
 import emailRegister from "../helpers/emailRegister.js";
+import emailForgotpass from "../helpers/emailForgotpass.js";
+
+
 const register = async (req, res) => {
   const { email,names } = req.body;
   //prevent duplicate users
@@ -37,7 +40,13 @@ const login = async (req, res) => {
   }
   //Review User password
   if (await user.comproPassword(password)) {
-    res.json({ token: generateJWT(user.id) });
+    //Authentication
+    res.json({
+      _id:user._id,
+      names:user.names,
+      email:user.email,
+      token:generateJWT(user.id),
+    });
   } else {
     const error = new Error(`Incorrect password`);
     return res.status(403).json({ msg: error.message });
@@ -45,7 +54,7 @@ const login = async (req, res) => {
 };
 const profile = (req, res) => {
   const { users } = req;
-  res.json({ Profile: users });
+  res.json({ users });
 };
 const confirm = async (req, res) => {
   const { token } = req.params;
@@ -76,6 +85,12 @@ const resetPassword = async (req, res) => {
   try {
     existUser.token = generateId();
     await existUser.save();
+    //Send Email with Instructions
+    emailForgotpass({
+      email,
+      names:existUser.names,
+      token:existUser.token
+    })
     res.json({
       msg: `We've sent you an email with detailed instructions to ${existUser.email}`,
     });
