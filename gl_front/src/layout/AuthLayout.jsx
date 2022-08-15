@@ -2,6 +2,7 @@ import React from "react";
 import Header from "../components/Header";
 import Dashboard from "../components/Dashboard";
 import Footer from "../components/Footer";
+import Sorteo from "../components/Sorteo";
 import { Outlet } from "react-router-dom";
 
 const AuthLayout = () => {
@@ -12,6 +13,7 @@ const AuthLayout = () => {
         <Outlet />
       </main>
       <Dashboard />
+      <Sorteo />
       <Footer />
     </>
   );
